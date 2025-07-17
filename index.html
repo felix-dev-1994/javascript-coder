@@ -1,14 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Calculadora Ley de Ohm</title>
-  <script defer src="./js/main.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="js/main.js"></script>
 </head>
 <body>
-    <div>
-        <h1>Calculadora Ley de Ohm</h1>
+  <div class="titulodelsimulador">
+    <h1>Calculadora Ley de Ohm</h1>
+
+    <label for="operacion">Seleccioná qué querés calcular:</label>
+    <select id="operacion">
+      <option value="resistencia">Resistencia (Ohm)</option>
+      <option value="voltaje">Voltaje (Volt)</option>
+      <option value="corriente">Corriente (Amp)</option>
+    </select>
+
+    <div id="inputs"></div>
+
+    <div class="buttons">
+      <button id="botoncalcular">Calcular</button>
     </div>
+
+    <div id="resultado"></div>
+    <div id="historico"></div>
+
+    <div class="buttons">
+      <button id="botonborrarHistorial">Borrar Historial</button>
+    </div>
+
+    <div>
+      <label for="filtro">Filtrar historial por magnitud:</label>
+      <input type="text" id="filtro" placeholder="Ej: Voltaje, Corriente, Resistencia" />
+    </div>
+  </div>
 </body>
 </html>
+
+

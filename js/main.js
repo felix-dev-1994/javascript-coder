@@ -1,146 +1,201 @@
 
-function calculoOhm() {
+document.addEventListener('DOMContentLoaded', () => {
+  const selectorOperacion = document.getElementById('operacion');
+  const botonCalcular = document.getElementById('botoncalcular');
+  const botonBorrarHistorial = document.getElementById('botonborrarHistorial');
+  const campoFiltro = document.getElementById('filtro');
+  const seccionInputs = document.getElementById('inputs');
+  const cartelResultado = document.getElementById('resultado');
+  const contenedorHistorial = document.getElementById('historico');
 
-    let seguircalculando = true;
+  // Muestra campos dinámicos según operación
+  function mostrarCampos() {
+    seccionInputs.innerHTML = '';
+    const tipo = selectorOperacion.value;
 
-    while (seguircalculando) {
+    const crearLabelYInput = (texto, id) => {
+      const label = document.createElement('label');
+      label.setAttribute('for', id);
+      label.textContent = texto;
 
-    const opciones = prompt(`
-    ¿Qué magnitud deseas calcular?
-    1 - Resistencia (Ohm)
-    2 - Voltaje (Volt)
-    3 - Corriente (Amp)
-    4 - Salir
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.step = 'any'; // permite decimales
+      input.id = id;
 
-    Ingresá el número de la opción deseada:
-`);
+      seccionInputs.appendChild(label);
+      seccionInputs.appendChild(input);
+    };
 
-    switch (opciones) {
-
-        case "1":
-        calculoResistencia();
-        break;
-
-        case "2":
-        calculoVoltaje();
-        break;
-
-        case "3":
-        calculoCorriente();
-        break;
-
-        case "4":
-        alert("Gracias por usar la calculadora. ¡Hasta la próxima!");
-        seguircalculando = false;
-        break;
-
-        default:
-        alert("Opción inválida. Por favor, elegí 1, 2, 3 o 4.");
-        break;
-
+    if (tipo === 'resistencia') {
+      crearLabelYInput('Voltaje (V):', 'voltaje');
+      crearLabelYInput('Corriente (A):', 'corriente');
+    } else if (tipo === 'voltaje') {
+      crearLabelYInput('Corriente (A):', 'corriente');
+      crearLabelYInput('Resistencia (Ω):', 'resistencia');
+    } else if (tipo === 'corriente') {
+      crearLabelYInput('Voltaje (V):', 'voltaje');
+      crearLabelYInput('Resistencia (Ω):', 'resistencia');
     }
-    }
-}
+  }
 
-function calculoResistencia() {
+  // Validaciones
+  function validarCampos() {
+    const tipo = selectorOperacion.value;
+    let esValido = true;
+    cartelResultado.textContent = '';
 
-    alert("Vamos a calcular la Resistencia (Ohm)");
+    // Limpiar errores anteriores
+    document.querySelectorAll('#inputs input').forEach(input => input.classList.remove('input-error'));
 
-    let voltaje = parseFloat(prompt("Ingresá el voltaje (V):"));
-    let corriente = parseFloat(prompt("Ingresá la corriente (I):"));
+    const marcarError = (input, mensaje) => {
+      input.classList.add('input-error');
+      cartelResultado.textContent = mensaje;
+      esValido = false;
+    };
 
-    //validaciones//
+    const validarCampo = (id, nombre) => {
+      const input = document.getElementById(id);
+      const valor = parseFloat(input.value);
+      if (!input.value) {
+        marcarError(input, `Por favor, ingresá el valor de ${nombre}.`);
+      } else if (isNaN(valor) || valor <= 0) {
+        marcarError(input, `${nombre} debe ser un número mayor que 0.`);
+      }
+    };
 
-    if (isNaN(voltaje) || isNaN(corriente)) {
-        alert("Error: Debés ingresar números válidos.");
-        return;
-    }
-    if (corriente === 0) {
-        alert("Error: La corriente no puede ser 0 (división por cero).");
-        return;
-    }
-
-    //calculo//
-
-    let resistencia = voltaje / corriente;
-
-    //validacion de resultado//
-
-    if (resistencia <= 0) {
-        alert("Error: La resistencia calculada no puede ser menor o igual a 0.");
-        return;
-    }
-
-    //resultado//
-
-    console.log(`La resistencia es ${resistencia.toFixed(2)} Ohm`);
-}
-
-function calculoVoltaje() {
-
-    alert("Vamos a calcular el Voltaje (Volt)");
-
-    let corriente = parseFloat(prompt("Ingresá la corriente (I):"));
-    let resistencia = parseFloat(prompt("Ingresá la resistencia (R):"));
-
-    //validaciones//
-
-    if (isNaN(corriente) || isNaN(resistencia)) {
-        alert("Error: Debés ingresar números válidos.");
-        return;
+    if (tipo === 'resistencia') {
+      validarCampo('voltaje', 'Voltaje');
+      validarCampo('corriente', 'Corriente');
+    } else if (tipo === 'voltaje') {
+      validarCampo('corriente', 'Corriente');
+      validarCampo('resistencia', 'Resistencia');
+    } else if (tipo === 'corriente') {
+      validarCampo('voltaje', 'Voltaje');
+      validarCampo('resistencia', 'Resistencia');
     }
 
-    //calculo//
+    return esValido;
+  }
 
-    let voltaje = corriente * resistencia;
+  // Cálculos físicos
+  function calcularResistencia() {
+    const voltaje = parseFloat(document.getElementById('voltaje').value);
+    const corriente = parseFloat(document.getElementById('corriente').value);
+    guardarResultado('Resistencia', voltaje / corriente, 'Ω');
+  }
 
-    //validacion de resultado//
+  function calcularVoltaje() {
+    const corriente = parseFloat(document.getElementById('corriente').value);
+    const resistencia = parseFloat(document.getElementById('resistencia').value);
+    guardarResultado('Voltaje', corriente * resistencia, 'V');
+  }
 
-    if (voltaje < 0) {
-        alert("Error: El voltaje calculado no puede ser menor que 0.");
-        return;
+  function calcularCorriente() {
+    const voltaje = parseFloat(document.getElementById('voltaje').value);
+    const resistencia = parseFloat(document.getElementById('resistencia').value);
+    guardarResultado('Corriente', voltaje / resistencia, 'A');
+  }
+
+  // Guardar resultado en localStorage
+  function guardarResultado(tipo, valor, unidad) {
+    document.querySelectorAll('#inputs input').forEach(input => input.classList.remove('input-error'));
+
+    const texto = `${tipo}: ${valor.toFixed(2)} ${unidad}`;
+    cartelResultado.textContent = texto;
+
+    const calculo = {
+      magnitud: tipo,
+      valor: `${valor.toFixed(2)} ${unidad}`,
+      timestamp: new Date().toLocaleString()
+    };
+
+    const historial = JSON.parse(localStorage.getItem('historico')) || [];
+    historial.push(calculo);
+    localStorage.setItem('historico', JSON.stringify(historial));
+
+    mostrarHistorial(historial);
+  }
+
+  // Mostrar historial en pantalla
+  function mostrarHistorial(lista) {
+    contenedorHistorial.innerHTML = '';
+
+    const titulo = document.createElement('h3');
+    titulo.textContent = 'Historial:';
+    contenedorHistorial.appendChild(titulo);
+
+    if (lista.length === 0) {
+      const mensaje = document.createElement('p');
+      mensaje.textContent = 'No hay cálculos todavía.';
+      contenedorHistorial.appendChild(mensaje);
+      return;
     }
 
-    //resultado//
+    lista.forEach((item) => {
+      const parrafo = document.createElement('p');
 
-    console.log(`El voltaje es ${voltaje.toFixed(2)} Volt`);
-}
+      const magnitud = document.createElement('strong');
+      magnitud.textContent = `${item.magnitud}: ${item.valor}`;
 
-function calculoCorriente() {
+      const salto = document.createElement('div');
+      salto.style.height = '4px';
 
-    alert("Vamos a calcular la Corriente (Amp)");
+      const fecha = document.createElement('small');
+      fecha.textContent = item.timestamp;
 
-    let voltaje = parseFloat(prompt("Ingresá el voltaje (V):"));
-    let resistencia = parseFloat(prompt("Ingresá la resistencia (R):"));
+      parrafo.appendChild(magnitud);
+      parrafo.appendChild(salto);
+      parrafo.appendChild(fecha);
 
-    //validaciones//
+      contenedorHistorial.appendChild(parrafo);
+    });
+  }
 
-    if (isNaN(voltaje) || isNaN(resistencia)) {
-        alert("Error: Debés ingresar números válidos.");
-        return;
+  // Borrar historial
+  function borrarHistorial() {
+    localStorage.removeItem('historico');
+    mostrarHistorial([]);
+    cartelResultado.textContent = 'Historial eliminado correctamente.';
+  }
+
+  // Filtrar historial
+  function filtrarHistorial() {
+    const texto = campoFiltro.value.trim().toLowerCase();
+    const historial = JSON.parse(localStorage.getItem('historico')) || [];
+    const filtrados = historial.filter(item =>
+      item.magnitud.toLowerCase().includes(texto)
+    );
+    mostrarHistorial(filtrados);
+  }
+
+  // Eventos principales
+  selectorOperacion.addEventListener('change', mostrarCampos);
+
+  botonCalcular.addEventListener('click', () => {
+    if (validarCampos()) {
+      const operacion = selectorOperacion.value;
+      if (operacion === 'resistencia') calcularResistencia();
+      if (operacion === 'voltaje') calcularVoltaje();
+      if (operacion === 'corriente') calcularCorriente();
     }
-    if (resistencia === 0) {
-        alert("Error: La resistencia no puede ser 0 (división por cero).");
-        return;
-    }
+  });
 
-    //calculo//
+  botonBorrarHistorial.addEventListener('click', borrarHistorial);
+  campoFiltro.addEventListener('input', filtrarHistorial);
 
-    let corriente = voltaje / resistencia;
+  // Inicializar
+  mostrarCampos();
+  const historialInicial = JSON.parse(localStorage.getItem('historico')) || [];
+  mostrarHistorial(historialInicial);
+});
 
-    //validacion de resultado//
 
-    if (corriente <= 0) {
-        alert("Error: La corriente no puede ser menor o igual a 0.");
-        return;
-    }
 
-    //resultado//
 
-    console.log(`La corriente es ${corriente.toFixed(2)} Amp`);
-}
 
-calculoOhm();
+
+
 
 
 

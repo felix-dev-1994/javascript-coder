@@ -1,0 +1,126 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #121212;
+  color: #f1f1f1;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.titulodelsimulador {
+  max-width: 600px;
+  margin: auto;
+  background-color: #1f1f1f;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 171, 0.3);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #00ffab;
+  text-shadow: 0 0 8px #00ffab88;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #ccc;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 2px solid #00ffab;
+  border-radius: 6px;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #00f7ff;
+  box-shadow: 0 0 10px #00f7ff88;
+}
+
+button {
+  flex: 1;
+  padding: 12px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #00ffab, #00f7ff);
+  color: #121212;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #00f7ffcc;
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+#botonborrarHistorial {
+  margin-top: 20px;
+}
+
+#resultado {
+  margin-top: 25px;
+  padding: 15px;
+  border-left: 4px solid #00ffab;
+  background-color: #222;
+  font-weight: bold;
+  border-radius: 5px;
+  color: #ffffff;
+  box-shadow: inset 0 0 8px #00ffab33;
+}
+
+#historico {
+  margin-top: 30px;
+  max-height: 300px;
+  overflow-y: auto;
+  border-top: 1px solid #444;
+  padding-top: 15px;
+}
+
+#historico h3 {
+  color: #00ffab;
+}
+
+#historico p {
+  background-color: #2d2d2d;
+  border-left: 4px solid #00ffab;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  color: #eee;
+  box-shadow: 0 0 6px #00ffab22;
+}
+
+.input-error {
+  border-color: #ff4d4d;
+  box-shadow: 0 0 6px #ff4d4d88;
+}
+
+
+
+
